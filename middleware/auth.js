@@ -10,7 +10,6 @@ const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded: ", decoded);
     if (!decoded.id) {
       res.status(400);
       throw new Error('Invalid token: No user ID found.');
