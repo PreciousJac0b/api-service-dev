@@ -78,6 +78,11 @@ CURRENCY_API_KEY=your_exchange_rate_api_key
 
 ```
 npm run start
+
+or simply run:
+
+```
+nodemon
 ```
 
 
