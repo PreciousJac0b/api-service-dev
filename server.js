@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import productRouter from './routes/productRoutes.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 dotenv.config();
 
@@ -13,6 +15,29 @@ app.use(express.json());
 app.use('/api/auth/', authRouter);
 app.use("/api/users/", userRouter);
 app.use("/api/products/", productRouter);
+
+
+const options = {
+  definition: {
+    openapi: '3.0.0', 
+    info: {
+      title: 'Greensol TaskAPI documentation',
+      version: '1.0.0',
+      description: 'Express API for converting currencies'
+    },
+    servers: [
+      {
+        url: 'http://localhost:5000'
+      }
+    ]
+  },
+  apis: ['./routes/*.js']
+}
+
+const swaggerSpec = swaggerJSDoc(options);
+
+app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log('Successfully connected to MongoDB...'))

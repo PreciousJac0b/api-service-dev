@@ -29,8 +29,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { error } = validate(req.body);
   if (error) {
-    res.status(401);
-    throw new Error("Invalid email or password");
+    res.status(400);
+    throw new Error("Validation error");
   }
 
   const { email, password } = req.body;
