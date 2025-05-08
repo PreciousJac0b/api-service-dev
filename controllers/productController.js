@@ -97,7 +97,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new Error("User not authorized to delete this product");
   }
 
-  await product.deleteOne(); // Use deleteOne() in Mongoose 6+
+  await product.deleteOne(); 
   res.json({ message: "Product removed" });
 });
 
@@ -113,7 +113,7 @@ const getExchangeRates = async () => {
 
   try {
     console.log("Fetching fresh exchange rates");
-    const apiKey = process.env.CURRENCY_API_KEY;
+    const apiKey = process.env.CURRENCY_API_KEY; // API key from .env
     if (!apiKey) {
       console.error("Exchange Rate API Key not found in .env");
       return {};

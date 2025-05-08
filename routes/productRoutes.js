@@ -1,5 +1,5 @@
 import express from "express";
-import protect from "../middleware/auth.js";
+import  { protect, authorizedRoles } from "../middleware/auth.js";
 import {
   createProduct,
   getAllProducts,
@@ -157,7 +157,7 @@ const router = express.Router();
  */
 router
   .route("/")
-  .post(protect, validateProduct, createProduct)
+  .post(protect, authorizedRoles('admin', 'seller'), validateProduct, createProduct)
   .get(getAllProducts);
 
 /**
@@ -250,8 +250,8 @@ router
 router
   .route("/:id")
   .get(getProductById)
-  .put(protect, validateProduct, updateProduct)
-  .delete(protect, deleteProduct);
+  .put(protect, authorizedRoles('admin', 'seller'), validateProduct, updateProduct)
+  .delete(protect, authorizedRoles('admin', 'seller'), deleteProduct);
 
 /**
  * @swagger

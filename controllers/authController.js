@@ -4,23 +4,26 @@ import Joi from 'joi';
 import User from "../models/User.js";
 import _ from 'lodash';
 import generateToken from "../utils/generateToken.js";
+import generateUser from "../utils/createUser.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  const {username, email, password} = req.body;
+  // const {username, email, password} = req.body;
 
-  let user = await User.findOne({ email: email });
+  // let user = await User.findOne({ email: email });
 
-  if (user) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  // if (user) {
+  //   res.status(400);
+  //   throw new Error("User already exists");
+  // }
+  // const salt = await bcrypt.genSalt(10);
+  // const hashedPassword = await bcrypt.hash(password, salt);
 
-  user = new User({ username, email, password: hashedPassword });
-  await user.save()
+  // user = new User({ username, email, password: hashedPassword, role: req.body.role || "buyer" });
+  // await user.save()
 
-  const token = user.generateAuthToken();
+  let user = await generateUser(req.body);
+
+  const token = generateToken(user._id, user.role); // JWT token to access protected routes.
 
   res.header('x-auth-token', token).status(201).send(_.pick(user, ["_id", "username", "email"]));
 });
@@ -43,7 +46,7 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
-      token: generateToken(user._id),
+      token: generateToken(user._id, user.role),
     })
   } else {
     res.status(401);

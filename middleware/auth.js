@@ -22,4 +22,15 @@ const protect = async (req, res, next) => {
   }
 };
 
-export default protect;
+const authorizedRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        message: "Access Denied. You don't have the permission to access this resource."
+      });
+    }
+    next();
+}  
+}
+
+export { protect, authorizedRoles };

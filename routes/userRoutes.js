@@ -1,6 +1,10 @@
 import express from "express";
-import protect from "../middleware/auth.js";
-import { getUserProfile, updateUserProfile } from "../controllers/userController.js";
+import { authorizedRoles, protect } from "../middleware/auth.js";
+import {
+  getUserProfile,
+  updateUserProfile,
+  createUser,
+} from "../controllers/userController.js";
 import { validateProfileUpdate } from "../validators/userValidator.js";
 
 const router = express.Router();
@@ -32,14 +36,14 @@ const router = express.Router();
  *           format: email
  *           description: User's email address
  *           example: john.doe@example.com
- *         createdAt:
+ *         role:
  *           type: string
- *           format: date-time
- *           description: Timestamp of user creation
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           description: Timestamp of last profile update
+ *           description: Role of the user
+ *           enum:
+ *            - admin
+ *            - seller
+ *            - buyer
+ *           example: admin
  *     UserProfileUpdate:
  *       type: object
  *       properties:
@@ -120,7 +124,72 @@ const router = express.Router();
 router
   .route("/profile")
   .get(protect, getUserProfile)
-  .put(protect, validateProfileUpdate, updateUserProfile); 
+  .put(protect, validateProfileUpdate, updateUserProfile);
 
+/**
+ * @swagger
+ * /api/users/create:
+ *   post:
+ *     summary: Get current user's profile
+ *     tags: [Users]
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Custom authentication token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserProfile'
+ *     responses:
+ *       200:
+ *         description: User profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserProfile'
+ *       401:
+ *         description: Unauthorized - No token provided or token is invalid
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ *   put:
+ *     summary: Update current user's profile
+ *     tags: [Users]
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Custom authentication token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserProfileUpdate'
+ *     responses:
+ *       200:
+ *         description: User profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserProfile'
+ *       400:
+ *         description: Invalid input data (validation error)
+ *       401:
+ *         description: Unauthorized - No token provided or token is invalid
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.route("/create").post(protect, authorizedRoles('admin'), createUser);
 
 export default router;

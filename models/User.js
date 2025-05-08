@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema(
       minlength: 5,
       maxlength: 255,
     },
+    role: {
+      type: String,
+      required: true,
+      enum: ['admin', 'seller', 'buyer'],
+      default: 'buyer',
+    },
     password: {
       type: String,
       required: true,
