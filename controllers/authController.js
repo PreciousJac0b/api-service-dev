@@ -35,10 +35,13 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Validation error");
   }
+  // console.log("Request: ", req.body)
 
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
+
+  // console.log("User: ", user)
 
   const passwordMatched = await user.matchPassword(password);
   if (user && (passwordMatched)) {

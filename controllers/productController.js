@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Product from "../models/Product.js";
 import axios from 'axios';
 import mongoose from 'mongoose';
+import ConversionLog from "../models/ConversionLog.js";
 
 const exchangeRateCache = {
   rates: {},
@@ -139,7 +140,8 @@ const getExchangeRates = async () => {
 
 const getProductPriceInCurrency = asyncHandler(async (req, res) => {
   const { id, currency } = req.params;
-
+  console.log("User", req.user);
+  let defaultCurrency = req.user.currency || currency || 'USD'; // Falls back to USD if user doesn't specify currency.
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(400);
     throw new Error("Invalid Product ID format");
@@ -152,28 +154,40 @@ const getProductPriceInCurrency = asyncHandler(async (req, res) => {
     throw new Error("Product not found");
   }
 
+  
   const rates = await getExchangeRates();
-  console.log(rates);
+  // console.log(rates);
   const targetCurrency = currency.toUpperCase();
-
+  
   const exchangeRate = rates[targetCurrency];
-
+  
   if (!exchangeRate) {
     res.status(400);
     throw new Error(
       `Currency code '${targetCurrency}' not supported or invalid`
     );
   }
-
+  
   const convertedPrice = (product.price * exchangeRate).toFixed(2);
+  
+  const currLog = new ConversionLog({
+    userId: req.user.id,
+    productId: product.id,
+    currency: defaultCurrency,
+    convertedPrice: convertedPrice,
+    exchangeRate: exchangeRate,
+  });
+
+  await currLog.save();
 
   res.json({
     productName: product.name,
     basePrice: product.price,
+    convertedPrice: parseFloat(convertedPrice),
     baseCurrency: "NGN",
     targetCurrency,
     exchangeRate,
-    convertedPrice: parseFloat(convertedPrice),
+    timestamp: Date.now()
   });
 });
 

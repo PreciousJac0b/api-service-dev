@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       maxlength: 255,
     },
+    currency: {
+      type: String,
+      minlength: 3,
+    }
   },
 );
 

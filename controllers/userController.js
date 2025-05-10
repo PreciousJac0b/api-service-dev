@@ -35,6 +35,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.username = req.body.username || user.username;
     user.email = req.body.email || user.email;
     user.role = req.body.role || user.role;
+    user.currency = req.body.currency || user.currency;
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(req.body.password, salt);
@@ -49,6 +50,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         email: updatedUser.email,
         role: updatedUser.role,
         token: generateToken(updatedUser._id),
+        currency: updatedUser.currency,
       });
     } else {
       res.json({
@@ -56,6 +58,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         username: updatedUser.username,
         email: updatedUser.email,
         role: updatedUser.role,
+        currency: updatedUser.currency,
       });
     }
   } else {
