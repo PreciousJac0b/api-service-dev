@@ -5,8 +5,11 @@ import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import productRouter from './routes/productRoutes.js';
 import exchangeRouter from './routes/exchangeRoutes.js';
+import mailRouter from './routes/mailRoutes.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
+import {transporter, testMailer} from './utils/mailer.js';
+import { sendMailService } from './services/mailService.js';
 
 dotenv.config();
 
@@ -17,6 +20,7 @@ app.use('/api/auth/', authRouter);
 app.use("/api/users/", userRouter);
 app.use("/api/products/", productRouter);
 app.use("/api/exchange/", exchangeRouter);
+// app.use("/api/sendmail/", mailRouter);
 
 
 const options = {
@@ -30,6 +34,20 @@ const options = {
     servers: [
       {
         url: 'http://localhost:5000'
+      }
+    ],
+    components: {
+      securitySchemes: {
+        XAuthToken: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'x-auth-token',
+        }
+      }
+    },
+    security: [
+      {
+        XAuthToken: []
       }
     ]
   },
@@ -49,6 +67,7 @@ mongoose.connect(process.env.MONGODB_URI)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+  testMailer();
   console.log(`listening on port ${PORT}...`)
 })
 

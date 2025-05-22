@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['admin', 'seller', 'buyer'],
+      enum: ['admin', 'seller', 'buyer', 'superadmin'],
       default: 'buyer',
     },
     password: {
@@ -37,6 +37,16 @@ const userSchema = new mongoose.Schema(
     currency: {
       type: String,
       minlength: 3,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    tokenExpires: {
+      type: String,
+    },
+    verificationToken: {
+      type: String,
     }
   },
 );

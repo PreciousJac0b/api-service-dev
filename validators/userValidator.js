@@ -16,5 +16,17 @@ const profileUpdateSchema = Joi.object({
   password: Joi.string().min(6).optional(), 
 }).min(1); 
 
-export const validateProfileUpdate =
+function validateLogin(user) {
+  const schema = Joi.object({
+    email: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(6).max(255).required(),
+  });
+
+  return schema.validate(user);
+}
+
+const validateProfileUpdate =
   handleValidationErrors(profileUpdateSchema);
+
+
+export { validateProfileUpdate, validateLogin };

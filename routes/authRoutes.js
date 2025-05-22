@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser } from '../controllers/authController.js';
+import { loginUser, registerUser, verifyUser } from '../controllers/authController.js';
 
 
 const router = express.Router();
@@ -80,6 +80,7 @@ const router = express.Router();
  * /api/auth/register:
  *   post:
  *     summary: Register a new user
+ *     security: []
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -107,6 +108,7 @@ router.post('/register', registerUser);
  * /api/auth/login:
  *   post:
  *     summary: Authenticate user and get token
+ *     security: []
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -130,5 +132,7 @@ router.post('/register', registerUser);
  */
 router.post('/login', loginUser);
 
+
+router.route("/verify/").get(verifyUser);
 
 export default router;

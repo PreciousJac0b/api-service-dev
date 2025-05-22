@@ -305,7 +305,7 @@ router
 router
   .route("/:id")
   .get(getProductById)
-  .put(protect, authorizedRoles('admin', 'seller'), validateProduct, updateProduct)
+  .put(protect, authorizedRoles('admin', 'superadmin', 'seller'), validateProduct, updateProduct)
   .delete(protect, authorizedRoles('admin', 'seller'), deleteProduct);
 
 /**
