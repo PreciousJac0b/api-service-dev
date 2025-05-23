@@ -33,8 +33,13 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000'
-      }
+        url: 'http://localhost:5000',
+        description: "Local development server"
+      },
+      {
+        url: 'https://api-service-dev-v5yo.onrender.com/',
+        description: "Live Server"
+      },
     ],
     components: {
       securitySchemes: {
