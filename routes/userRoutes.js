@@ -232,57 +232,21 @@ router
  *   post:
  *     summary: Get current user's profile
  *     tags: [Users]
- *     parameters:
- *       - in: header
- *         name: x-auth-token
- *         required: true
- *         schema:
- *           type: string
- *         description: Custom authentication token
+ *     security:
+ *       - XAuthToken: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserProfile'
+ *             $ref: '#/components/schemas/CreateUser'
  *     responses:
  *       200:
  *         description: User profile data
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserProfile'
- *       401:
- *         description: Unauthorized - No token provided or token is invalid
- *       404:
- *         description: User not found
- *       500:
- *         description: Server error
- *   put:
- *     summary: Update current user's profile
- *     tags: [Users]
- *     parameters:
- *       - in: header
- *         name: x-auth-token
- *         required: true
- *         schema:
- *           type: string
- *         description: Custom authentication token
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserProfileUpdate'
- *     responses:
- *       200:
- *         description: User profile updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserProfile'
- *       400:
- *         description: Invalid input data (validation error)
+ *               $ref: '#/components/schemas/CreateUser'
  *       401:
  *         description: Unauthorized - No token provided or token is invalid
  *       404:
@@ -290,74 +254,7 @@ router
  *       500:
  *         description: Server error
  */
-router.route("/create").post(protect, authorizedRoles('admin'), createUser);
-
-
-/**
- * @swagger
- * /api/users/create:
- *   post:
- *     summary: Get current user's profile
- *     tags: [Users]
- *     parameters:
- *       - in: header
- *         name: x-auth-token
- *         required: true
- *         schema:
- *           type: string
- *         description: Custom authentication token
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserProfile'
- *     responses:
- *       200:
- *         description: User profile data
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserProfile'
- *       401:
- *         description: Unauthorized - No token provided or token is invalid
- *       404:
- *         description: User not found
- *       500:
- *         description: Server error
- *   put:
- *     summary: Update current user's profile
- *     tags: [Users]
- *     parameters:
- *       - in: header
- *         name: x-auth-token
- *         required: true
- *         schema:
- *           type: string
- *         description: Custom authentication token
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserProfileUpdate'
- *     responses:
- *       200:
- *         description: User profile updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserProfile'
- *       400:
- *         description: Invalid input data (validation error)
- *       401:
- *         description: Unauthorized - No token provided or token is invalid
- *       404:
- *         description: User not found
- *       500:
- *         description: Server error
- */
-router.route("/create").post(protect, authorizedRoles('admin'), createUser);
+router.route("/create").post(protect, authorizedRoles('admin', "superadmin"), createUser);
 
 
 /**
