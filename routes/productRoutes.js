@@ -117,14 +117,7 @@ const router = express.Router();
  *     summary: Create a new product
  *     tags: [Products]
  *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: x-auth-token
- *         required: true
- *         schema:
- *           type: string
- *           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCIXhwIjoxNzQ5NDczMDgwfQ.wsfdeUp9bQ8PQ5YFZkAkqBMxSkjTGem9RHRP41ia1Ow"
+ *       - XAuthToken: []
  *     requestBody:
  *       required: true
  *       content:
@@ -147,54 +140,6 @@ const router = express.Router();
  *   get:
  *     summary: Retrieve a list of all products
  *     tags: [Products]
- *     parameters:
- *       - name: page
- *         in: query
- *         required: true
- *         schema:
- *           type: integer
- *           example: 1
- *         description: Specifies the page number
- *       - name: limit
- *         in: query
- *         required: true
- *         schema:
- *           type: string
- *           example: 10
- *         description: Specifies the number of conversions to be displayed per page.
- *       - name: priceMin
- *         in: query
- *         schema:
- *           type: integer
- *           example: 100
- *         description: Minimum price of product to be retrieved
- *       - name: priceMax
- *         in: query
- *         schema:
- *           type: integer
- *           example: 200000
- *         description: Maximum price of product to be retrieved
- *       - name: category
- *         in: query
- *         schema:
- *           type: string
- *           example: TV appliances
- *         description: Maximum price of product to be retrieved
- *       - name: search
- *         in: query
- *         schema:
- *           type: string
- *           example: Search Anything
- *         description: Keyword search in name and description
- *       - name: sort
- *         in: query
- *         schema:
- *           type: string
- *           enum:
- *            - price
- *            - name
- *           example: price
- *         description: Keyword search in name and description
  *     responses:
  *       200:
  *         description: A list of products
@@ -212,7 +157,7 @@ const router = express.Router();
  */
 router
   .route("/")
-  .post(protect, authorizedRoles('admin', 'seller'), validateProduct, createProduct)
+  .post(protect, authorizedRoles('admin', 'superadmin', 'seller'), validateProduct, createProduct)
   .get(getAllProducts);
 
 /**
@@ -243,7 +188,7 @@ router
  *     summary: Update a product by ID
  *     tags: [Products]
  *     security:
- *       - bearerAuth: []
+ *       - XAuthToken: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -276,7 +221,7 @@ router
  *     summary: Delete a product by ID
  *     tags: [Products]
  *     security:
- *       - bearerAuth: []
+ *       - XAuthToken: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -306,7 +251,7 @@ router
   .route("/:id")
   .get(getProductById)
   .put(protect, authorizedRoles('admin', 'superadmin', 'seller'), validateProduct, updateProduct)
-  .delete(protect, authorizedRoles('admin', 'seller'), deleteProduct);
+  .delete(protect, authorizedRoles('admin', 'superadmin',  'seller'), deleteProduct);
 
 /**
  * @swagger
@@ -314,14 +259,9 @@ router
  *   get:
  *     summary: Get product price converted to a specific currency
  *     tags: [Products]
+ *     security:
+ *       - XAuthToken: []
  *     parameters:
- *       - name: x-auth-token
- *         in: header
- *         required: true
- *         schema:
- *           type: string
- *           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCIXhwIjoxNzQ5NDczMDgwfQ.wsfdeUp9bQ8PQ5YFZkAkqBMxSkjTGem9RHRP41ia1Ow"
- *         description: Custom authentication token
  *       - in: path
  *         name: id
  *         required: true

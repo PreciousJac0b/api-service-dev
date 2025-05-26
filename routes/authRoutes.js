@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser, verifyUser } from '../controllers/authController.js';
+import { loginUser, registerUser, verifyUser, getLogin } from '../controllers/authController.js';
 
 
 const router = express.Router();
@@ -130,7 +130,7 @@ router.post('/register', registerUser);
  *       500:
  *         description: Server error
  */
-router.post('/login', loginUser);
+router.route('/login').post(loginUser).get(getLogin);
 
 
 router.route("/verify/").get(verifyUser);

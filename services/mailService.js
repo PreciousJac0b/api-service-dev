@@ -9,7 +9,7 @@ async function sendMailService(req, res, mailContent) {
       // text: `${mailContent.text}`,
       html: `${mailContent.html}`,
     });
-    res.status(200).send(`Mail sent to ${mailContent.mail} successfully\n`);
+    // res.status(200).send(`Mail sent to ${mailContent.mail} successfully. (From mailing service function)\n`);
   } catch (err) {
     console.error("Error while sending mail", err);
     res.status(500).send('Failed to send mail');

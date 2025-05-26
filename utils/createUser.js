@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from "../models/User.js";
 import { v4 as uuidv4 } from 'uuid';
-import { sendMailService } from '../services/mailService.js';
+import { sendverificationMail } from './verificationMail.js';
 
 
 async function generateUser(req, res, body, fromAdmin) {
@@ -34,18 +34,25 @@ async function generateUser(req, res, body, fromAdmin) {
 
   const createdUser = await user.save();
   
-  const link = `${process.env.BASE_URL}/api/auth/verify?token=${hashedUniqueString}`;
-  let message = `<h1>Email Verification</h1><p>Click the link to verify:</p><a href="${link}">${link}</a>`;
-  if (fromAdmin) {
-    message = `<h1>You were created by a superadmin and assigned the admin role!</h1><p>Click the link to verify:</p><a href="${link}">${link}</a><p></p><p>Only accept if you made this request. Ignore if you think we made a mistake.</p>`;
+  // const link = `${process.env.BASE_URL}/api/auth/verify?token=${hashedUniqueString}`;
+  // let message = `<h1>Email Verification</h1><p>Click the link to verify:</p><a href="${link}">${link}</a>`;
+  // if (fromAdmin) {
+  //   message = `<h1>You were created by a superadmin and assigned the admin role!</h1><p>Click the link to verify:</p><a href="${link}">${link}</a><p></p><p>Only accept if you made this request. Ignore if you think we made a mistake.</p>`;
+  // }
+
+  const verificationContent = {
+    email, 
+    hashedUniqueString,
+    fromAdmin
   }
 
-  const mailContent = {
-    mail: email,
-    subject: "Verify Email Address",
-    html: message,
-  }
-  await sendMailService(req, res, mailContent);
+  // const mailContent = {
+  //   mail: email,
+  //   subject: "Verify Email Address",
+  //   html: message,
+  // }
+  // await sendMailService(req, res, mailContent);
+  await sendverificationMail(req, res, verificationContent);
   return createdUser;
 }
 

@@ -30,6 +30,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
     "createdBy",
     "username email"
   );
+  if (!products) {
+    res.status(400);
+    throw new Error("No products found");
+  }
   res.json(products);
 });
 
@@ -114,7 +118,7 @@ const getExchangeRates = async () => {
 
   try {
     console.log("Fetching fresh exchange rates");
-    const apiKey = process.env.CURRENCY_API_KEY; // API key from .env
+    const apiKey = process.env.CURRENCY_API_KEY;
     if (!apiKey) {
       console.error("Exchange Rate API Key not found in .env");
       return {};
@@ -140,7 +144,6 @@ const getExchangeRates = async () => {
 
 const getProductPriceInCurrency = asyncHandler(async (req, res) => {
   const { id, currency } = req.params;
-  console.log("User", req.user);
   let defaultCurrency = req.user.currency || currency || 'USD'; // Falls back to USD if user doesn't specify currency.
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(400);
@@ -156,7 +159,6 @@ const getProductPriceInCurrency = asyncHandler(async (req, res) => {
 
   
   const rates = await getExchangeRates();
-  // console.log(rates);
   const targetCurrency = currency.toUpperCase();
   
   const exchangeRate = rates[targetCurrency];
