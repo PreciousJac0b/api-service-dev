@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 async function loginUserService(req, res, body) {
   const { error } = validateLogin(body);
+
   if (error) {
     res.status(400);
     throw new Error("Validation error");

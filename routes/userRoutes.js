@@ -110,6 +110,14 @@ const router = express.Router();
  *           type: number
  *           example: 10
  *         description: Number of items per page
+ *       - in: query
+ *         name: role
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [buyer, admin, all]
+ *           example: user
+ *         description: Filter users by role. Use 'all' to return every user, 'buyer' to return all buyers, 'admin' to reeturn all admins.
  *     responses:
  *       200:
  *         description: User profile data
@@ -118,7 +126,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/UserProfile'
  *   delete:
- *     summary: Delete a user by ID or delete all users
+ *     summary: Delete a user by ID, delete many users by ID or delete all users. You can either delete a user, delete many users or delete all users not doing all at once. To delete a user, provide their id in the id input box. To delete many users, provide all ids in the userIds input box. To delete all users, type true in the all input box.
  *     tags: [Users]
  *     security:
  *       - XAuthToken: []
@@ -129,16 +137,19 @@ const router = express.Router();
  *           type: string
  *         description: The user ID
  *       - in: query
- *         name: isverified
- *         schema:
- *           type: string
- *           example: true
- *         description: The criteria for many deletion from database. Criteria here is the isVerified property.
- *       - in: query
  *         name: all
  *         schema:
  *           type: string
  *         description: Type true if you want to delete all, false otherwise
+ *       - in: query
+ *         name: userIds
+ *         schema:
+ *           type: array
+ *           items:
+ *              type: string
+ *         style: form
+ *         explode: true
+ *         description: Array of user IDs to delete
  *     responses:
  *       200:
  *         description: User deleted successfully

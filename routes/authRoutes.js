@@ -73,6 +73,14 @@ const router = express.Router();
  *           type: string
  *           description: JWT token for authentication
  *           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *     VerifyInput:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: User's email address
+ *           example: john.doe@example.com
  */
 
 /**
@@ -94,7 +102,10 @@ const router = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
+ *               type: object
+ *               properties:
+ *                  message:
+ *                    type: string
  *       400:
  *         description: Invalid input data or user already exists
  *       500:
@@ -132,7 +143,33 @@ router.post('/register', registerUser);
  */
 router.route('/login').post(loginUser).get(getLogin);
 
-
-router.route("/verify/").get(verifyUser);
+/**
+ * @swagger
+ * /api/auth/verify:
+ *   post:
+ *     summary: Verify a particular user account using their mail address
+ *     security: []
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VerifyInput'
+ *     responses:
+ *       200:
+ *         description: User successfully verified.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *       401:
+ *         description: Invalid email or password
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.route("/verify/").get(verifyUser).post(verifyUser);
 
 export default router;

@@ -3,41 +3,56 @@ import User from "../models/User.js";
 
 
 async function getUsersService(req, res) {
-  const page = parseInt(req.query.page)
-  const limit = parseInt(req.query.limit)
+  const { role, page = 1, limit = 10 } = req.query;
+
+  if (role === 'superadmin') {
+  return res.status(403).json({ message: "Access to superadmin users is not allowed." });
+  }
+  
+  let query = { role: { $ne: 'superadmin' } };
+  if (role && role !== 'all' && role !== 'superadmin') {
+    query.role = role;
+  }
   const skip = (page - 1) * limit
-  const users = await User.find({})
-    .limit(limit)
-    .skip(skip);
+  const users = await User.find(query)
+    .limit(parseInt(limit))
+    .skip(skip)
+    .select('-password');
+
+  const total = await User.countDocuments(query);
 
   if (!users) {
     res.status(400);
     throw new Error("Users not found in DB")
   }
-  return users
+  return {page, limit, users, total}
 }
 
-async function deleteUsersService(req, res) {  // add option for admin to delete more than one user (1 < delete < all)
-  const id = req.query.id; // Submit render url. Update documentation and send the updated documentation.
+async function deleteUsersService(req, res) {  
+  const id = req.query.id;
   const all = req.query.all || false;
-  const Verified = req.query.isverified || undefined;
+  let userIds = req.query.userIds;
 
   if (all === "true" && (id || Verified)) {
   return res.status(400).json({ error: "Provide either 'all', 'isVerified', or 'id' — not a mix" });
-}
+  }
 
   if (all === "true") {
     await User.deleteMany({});
     return res.status(200).json({ message: 'All users deleted successfully' })
   }
 
-  if (Verified) {
-    const isVerified = Verified === "true";
-    const result = await User.deleteMany({ isVerified })
-    res.json({
-      message: `${result.deletedCount} user(s) deleted.`,
+  if (userIds) {
+    if (!Array.isArray(userIds)) {
+      userIds = [userIds];
+    }
+
+    const result = await User.deleteMany({ _id: { $in: userIds } });
+
+    return res.status(200).json({
       success: true,
-    })
+      message: `${result.deletedCount} user(s) deleted successfully`,
+    });
   }
 
   if (!id) {

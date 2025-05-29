@@ -18,9 +18,9 @@ const createAdminUser = asyncHandler(async (req, res) => {
 });
 
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await getUsersService(req, res);
+  const { users, total } = await getUsersService(req, res);
 
-  res.json({ users })
+  res.json({ total, data: users })
 })
 
 const deleteUsers = asyncHandler(async (req, res) => {
